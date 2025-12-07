@@ -1,4 +1,4 @@
-# 📚 MediaVault - Personal Media Manager
+<img width="1856" height="169" alt="imagen" src="https://github.com/user-attachments/assets/9a6e3185-f3aa-4498-beed-7ca4de3060a3" /># 📚 MediaVault - Personal Media Manager
 
 > Una aplicación Full-Stack robusta para gestionar colecciones personales de Libros y Videos, diseñada con un enfoque en la experiencia de usuario, portabilidad de datos y estética Gruvbox.
 
@@ -6,7 +6,7 @@
 
 ## 🚀 Descripción
 
-**Curator** nació de la necesidad de organizar recursos de aprendizaje y entretenimiento en un solo lugar, sin depender de algoritmos externos. Permite catalogar videos y libros, etiquetarlos con un sistema inteligente de categorías y realizar búsquedas instantáneas.
+**MediaVault** nació de la necesidad de organizar recursos de aprendizaje y entretenimiento en un solo lugar, sin depender de algoritmos externos. Permite catalogar videos y libros, etiquetarlos con un sistema inteligente de categorías y realizar búsquedas instantáneas.
 
 El proyecto destaca por su capacidad de cambiar de motor de base de datos (MySQL <-> SQLite) y su sistema de preservación de datos mediante "Snapshots JSON".
 
@@ -41,8 +41,8 @@ Este proyecto utiliza una arquitectura monorepo simplificada.
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone [https://github.com/TU_USUARIO/curator.git](https://github.com/TU_USUARIO/curator.git)
-    cd curator
+    git clone [https://github.com/adrianvpdev2703/curator.git](https://github.com/adrianvpdev2703/mediavault.git)
+    cd mediavault
     ```
 
 2.  **Instalar dependencias (Front & Back):**
@@ -71,3 +71,12 @@ backend/
 │   └── utils/        # Scripts de limpieza y backup
 ├── uploads/          # Almacenamiento de imágenes
 └── database.sqlite   # Base de datos local
+```
+
+## 🔒 Seguridad de Datos
+```text
+El sistema incluye un script MASTER_BACKUP.json que permite exportar toda la base de datos (relaciones incluidas) a un archivo plano, permitiendo migrar entre tecnologías (ej: de SQLite a PostgreSQL) sin perder información.
+```
+## Desarrollado por adrianvpdev2703
+
+
