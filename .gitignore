@@ -1,0 +1,37 @@
+# Dependencias (Se instalan con npm install, no se suben)
+node_modules/
+
+# Variables de entorno (SECRETOS - NUNCA SUBIR)
+.env
+
+# Base de datos local (Tu información personal)
+*.sqlite
+*.sqlite-journal
+*.db
+backups/
+database.sqlite
+database.sqlite.bak
+
+# Archivos de respaldo de datos (Tu JSON Maestro con datos reales)
+MASTER_BACKUP.json
+*.json.bak
+
+# Logs del sistema
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor settings (Opcional, a veces es bueno ignorarlo)
+.vscode/
+.idea/
+.DS_Store
+
+# CARPETA UPLOADS (Importante)
+# Ignoramos todas las imágenes para no llenar el repo de basura
+backend/uploads/*
+frontend/public/uploads/*
+uploads/*
+
+# EXCEPCIÓN: Mantenemos el archivo .gitkeep para que la carpeta uploads exista
+!backend/uploads/.gitkeep
+!uploads/.gitkeep
