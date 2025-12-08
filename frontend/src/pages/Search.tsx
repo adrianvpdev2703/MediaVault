@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { getBooks, deleteBook } from '../api/books';
 import { getVideos, deleteVideo } from '../api/videos';
 import ItemCard from '../components/ItemCard';
-import ViewToggle from '../components/ViewToggle'; // <--- IMPORTADO
+import ViewToggle from '../components/ViewToggle';
+import Pagination from '../components/Pagination';
 import { Search as SearchIcon } from 'lucide-react';
 
 interface UniversalItem {
@@ -16,12 +17,15 @@ interface UniversalItem {
     categories: string[];
 }
 
+const ITEMS_PER_PAGE = 50;
+
 export default function Search() {
     const [searchParams] = useSearchParams();
     const query = searchParams.get('q') || '';
 
     const [allItems, setAllItems] = useState<UniversalItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const [columns, setColumns] = useState<number>(() => {
         const saved = localStorage.getItem('gridColumns');
@@ -31,6 +35,10 @@ export default function Search() {
     useEffect(() => {
         localStorage.setItem('gridColumns', columns.toString());
     }, [columns]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [query]);
 
     useEffect(() => {
         const loadEverything = async () => {
@@ -108,6 +116,11 @@ export default function Search() {
         });
     }, [query, allItems]);
 
+    const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+    const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+    const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+
     const getGridClass = () => {
         switch (columns) {
             case 6:
@@ -131,7 +144,7 @@ export default function Search() {
                     <p className="text-gray-400 mt-2 text-sm">
                         {loading
                             ? 'Cargando...'
-                            : `Resultados: ${filteredItems.length} (Total: ${allItems.length})`}
+                            : `Resultados: ${filteredItems.length} (Total DB: ${allItems.length})`}
                     </p>
                 </div>
 
@@ -139,7 +152,7 @@ export default function Search() {
             </div>
 
             <div className={`grid gap-4 ${getGridClass()}`}>
-                {filteredItems.map((item) => (
+                {currentItems.map((item) => (
                     <ItemCard
                         key={item.uniqueKey}
                         id={item.id}
@@ -154,6 +167,14 @@ export default function Search() {
                     />
                 ))}
             </div>
+
+            {filteredItems.length > 0 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
+            )}
         </div>
     );
 }

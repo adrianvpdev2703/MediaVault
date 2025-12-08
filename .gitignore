@@ -35,3 +35,6 @@ uploads/*
 # EXCEPCIÓN: Mantenemos el archivo .gitkeep para que la carpeta uploads exista
 !backend/uploads/.gitkeep
 !uploads/.gitkeep
+
+# CARPETAS TEMPORALES (FRONTEND)
+frontend/temp/

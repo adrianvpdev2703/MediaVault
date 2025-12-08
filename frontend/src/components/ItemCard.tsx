@@ -31,7 +31,6 @@ export default function ItemCard({
 
     return (
         <div className="group relative bg-gruv-dark border border-gray-700/50 rounded-xl overflow-hidden shadow-lg hover:shadow-gruv-aqua/20 transition-all duration-300 hover:-translate-y-1 flex flex-col h-full">
-            {/* 1. IMAGEN (Link al detalle) */}
             <RouterLink
                 to={`/view/${type}/${id}`}
                 className="relative overflow-hidden aspect-video flex-shrink-0 cursor-pointer"
@@ -44,15 +43,13 @@ export default function ItemCard({
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300" />
             </RouterLink>
 
-            {/* 2. CATEGORÍAS (AHORA SON LINKS DE BÚSQUEDA) */}
             {categories && categories.length > 0 && (
                 <div className="px-4 mt-3 flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gruv-aqua/50 scrollbar-track-transparent">
                     {categories.map((cat, index) => (
                         <RouterLink
                             key={index}
-                            // Codificamos la URI por si la categoría tiene espacios o tildes
                             to={`/search?q=${encodeURIComponent(cat)}`}
-                            onClick={(e) => e.stopPropagation()} // Evita conflictos de click
+                            onClick={(e) => e.stopPropagation()}
                             className="whitespace-nowrap px-2 py-1 bg-white/5 border border-white/10 rounded-md text-xs text-gruv-aqua font-medium tracking-wide hover:bg-gruv-aqua hover:text-white hover:border-gruv-aqua transition-all duration-200 cursor-pointer"
                             title={`Buscar todo sobre: ${cat}`}
                         >
@@ -62,9 +59,7 @@ export default function ItemCard({
                 </div>
             )}
 
-            {/* 3. CONTENIDO RESTANTE */}
             <div className="px-4 pb-4 pt-2 flex flex-col gap-4 flex-1">
-                {/* Título (Link al detalle) */}
                 <RouterLink to={`/view/${type}/${id}`}>
                     <h2
                         className="text-xl font-bold text-gruv-yellow line-clamp-1 hover:text-gruv-aqua transition-colors"
@@ -74,7 +69,6 @@ export default function ItemCard({
                     </h2>
                 </RouterLink>
 
-                {/* Zona del Link */}
                 <div className="mt-auto flex items-center bg-gray-100/90 rounded-md p-1 pl-3 shadow-inner gap-2">
                     <span className="text-sm text-gray-800 truncate font-mono flex-1 select-all">
                         {link}
@@ -93,7 +87,6 @@ export default function ItemCard({
                     </button>
                 </div>
 
-                {/* Botones de Acción */}
                 <div className="flex items-center justify-between pt-2 border-t border-gray-700/50">
                     <a
                         href={link}

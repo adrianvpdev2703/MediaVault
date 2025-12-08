@@ -7,7 +7,6 @@ const exportMaster = async () => {
     try {
         console.log('📦 Conectando a MySQL para extraer datos...');
 
-        // 1. Obtener Videos
         const videos = await Video.findAll({
             include: [
                 {
@@ -17,7 +16,6 @@ const exportMaster = async () => {
             ],
         });
 
-        // 2. Obtener Libros
         const books = await Book.findAll({
             include: [
                 {
@@ -27,7 +25,6 @@ const exportMaster = async () => {
             ],
         });
 
-        // 3. Limpiar y formatear datos (El formato universal)
         const cleanVideos = videos.map((v) => ({
             title: v.title,
             link: v.link,
@@ -54,7 +51,6 @@ const exportMaster = async () => {
             },
         };
 
-        // 4. Guardar el JSON Maestro
         fs.writeFileSync(
             'MASTER_BACKUP.json',
             JSON.stringify(masterBackup, null, 2),

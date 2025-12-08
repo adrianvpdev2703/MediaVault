@@ -34,7 +34,6 @@ exports.createBook = async (req, res) => {
             cover: req.file ? req.file.filename : null,
         });
 
-        // --- CORRECCIÓN (Bucle Secuencial) ---
         const categoriesArray = categories
             .split(',')
             .map((c) => c.trim())
@@ -47,7 +46,6 @@ exports.createBook = async (req, res) => {
         }
 
         await book.addCategories(categoryInstances);
-        // -------------------------------------
 
         res.json(book);
     } catch (error) {
@@ -70,7 +68,6 @@ exports.updateBook = async (req, res) => {
         await book.save();
 
         if (categories) {
-            // --- CORRECCIÓN (Bucle Secuencial) ---
             const categoriesArray = categories
                 .split(',')
                 .map((c) => c.trim())
@@ -82,7 +79,6 @@ exports.updateBook = async (req, res) => {
                 categoryInstances.push(cat);
             }
             await book.setCategories(categoryInstances);
-            // -------------------------------------
         }
 
         res.json(book);

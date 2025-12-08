@@ -16,7 +16,6 @@ export default function App() {
                     <Route path="/add" element={<AddItem />} />
                     <Route path="/edit/:id" element={<AddItem />} />
                     <Route path="/search" element={<Search />} />
-
                     <Route path="/view/:type/:id" element={<ItemDetail />} />
                 </Routes>
             </Layout>

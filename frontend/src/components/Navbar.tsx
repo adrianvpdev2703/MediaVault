@@ -12,11 +12,9 @@ export default function Navbar() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
-    // Sincronizar el input con la URL (por si refrescas la página)
     const initialQuery = searchParams.get('q') || '';
     const [searchTerm, setSearchTerm] = useState(initialQuery);
 
-    // Efecto para limpiar la barra si navegas fuera de search (opcional, gusto personal)
     useEffect(() => {
         if (path !== '/search') {
             setSearchTerm('');
@@ -29,14 +27,9 @@ export default function Navbar() {
         const value = e.target.value;
         setSearchTerm(value);
 
-        // Magia: Si hay texto, vamos a /search. Si no, volvemos al home o nos quedamos.
         if (value.trim()) {
             navigate(`/search?q=${encodeURIComponent(value)}`);
         } else {
-            // Si el usuario borra todo, ¿qué hacemos?
-            // Opción A: Ir al Home
-            // navigate('/');
-            // Opción B: Quedarse en /search vacío (usaremos esta)
             navigate('/search');
         }
     };

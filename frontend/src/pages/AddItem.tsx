@@ -13,15 +13,10 @@ export default function AddItem() {
     const type = searchParams.get('type') || 'book';
     const isEditing = Boolean(id);
 
-    // Estados del formulario
     const [title, setTitle] = useState('');
     const [link, setLink] = useState('');
-
-    // CAMBIO IMPORTANTE: Ahora manejamos arrays para las categorías seleccionadas
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-    // Input temporal para lo que el usuario está escribiendo
     const [categoryInput, setCategoryInput] = useState('');
-    // Todas las categorías disponibles en la DB
     const [availableCategories, setAvailableCategories] = useState<
         { id: number; name: string }[]
     >([]);
@@ -29,12 +24,9 @@ export default function AddItem() {
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
 
-    // Cargar datos iniciales
     useEffect(() => {
-        // 1. Cargar lista de categorías existentes para sugerencias
         fetchCategories();
 
-        // 2. Si es edición, cargar los datos del item
         if (isEditing && id) {
             if (type === 'book') loadBookData(id);
             else if (type === 'video') loadVideoData(id);
@@ -55,7 +47,6 @@ export default function AddItem() {
             const data = await getBookById(bookId);
             setTitle(data.title);
             setLink(data.link);
-            // Transformamos los objetos [{name: 'A'}, {name: 'B'}] a un array simple ['A', 'B']
             if (data.Categories) {
                 setSelectedCategories(data.Categories.map((c: any) => c.name));
             }
@@ -79,43 +70,33 @@ export default function AddItem() {
         }
     };
 
-    // --- LÓGICA DE CATEGORÍAS ---
-
-    // Agregar categoría al presionar Enter o seleccionar
     const addCategory = (name: string) => {
         const trimmedName = name.trim();
-        // Si no está vacía y no está ya seleccionada
+
         if (trimmedName && !selectedCategories.includes(trimmedName)) {
             setSelectedCategories([...selectedCategories, trimmedName]);
         }
-        setCategoryInput(''); // Limpiar input
+        setCategoryInput('');
     };
 
-    // Manejar Enter en el input
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Evitar submit del form
+            e.preventDefault();
             addCategory(categoryInput);
         }
     };
 
-    // Eliminar categoría seleccionada
     const removeCategory = (nameToRemove: string) => {
         setSelectedCategories(
             selectedCategories.filter((c) => c !== nameToRemove),
         );
     };
 
-    // Filtrar sugerencias:
-    // 1. Que coincidan con lo que escribe el usuario
-    // 2. Que NO estén ya seleccionadas
     const suggestions = availableCategories.filter(
         (c) =>
             c.name.toLowerCase().includes(categoryInput.toLowerCase()) &&
             !selectedCategories.includes(c.name),
     );
-
-    // ----------------------------
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -128,7 +109,6 @@ export default function AddItem() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Agregamos lo que esté en el input al momento de guardar por si se le olvidó dar Enter
         let finalCategories = [...selectedCategories];
         if (
             categoryInput.trim() &&
@@ -146,7 +126,6 @@ export default function AddItem() {
         const formData = new FormData();
         formData.append('title', title);
         formData.append('link', link);
-        // CONVERTIMOS EL ARRAY A STRING PARA TU BACKEND: ['A', 'B'] -> "A, B"
         formData.append('categories', finalCategories.join(', '));
 
         if (file) formData.append('cover', file);
@@ -172,7 +151,6 @@ export default function AddItem() {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 animate-fade-in">
-            {/* Preview Image */}
             <div className="flex items-center justify-center">
                 <div className="bg-gruv-dark border border-gruv-aqua rounded-lg h-[350px] w-full max-w-[450px] flex items-center justify-center text-gruv-green overflow-hidden relative shadow-lg">
                     {preview ? (
@@ -187,7 +165,6 @@ export default function AddItem() {
                 </div>
             </div>
 
-            {/* Formulario */}
             <form
                 onSubmit={handleSubmit}
                 className="flex flex-col gap-5 text-gruv-green"
@@ -223,14 +200,12 @@ export default function AddItem() {
                     />
                 </div>
 
-                {/* --- NUEVO SELECTOR DE CATEGORÍAS --- */}
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-gruv-aqua uppercase tracking-wider">
                         Categorías
                     </label>
 
                     <div className="p-3 rounded bg-black/20 border border-gray-600 focus-within:border-gruv-aqua transition-colors min-h-[50px] flex flex-wrap gap-2 relative">
-                        {/* 1. Chips de categorías seleccionadas */}
                         {selectedCategories.map((cat, idx) => (
                             <span
                                 key={idx}
@@ -247,7 +222,6 @@ export default function AddItem() {
                             </span>
                         ))}
 
-                        {/* 2. Input para escribir */}
                         <input
                             type="text"
                             placeholder={
@@ -261,7 +235,6 @@ export default function AddItem() {
                             className="bg-transparent outline-none flex-1 text-white min-w-[120px]"
                         />
 
-                        {/* 3. Menú de Sugerencias Flotante */}
                         {categoryInput && suggestions.length > 0 && (
                             <div className="absolute top-full left-0 w-full mt-2 bg-gruv-dark border border-gray-600 rounded-lg shadow-xl z-10 max-h-[200px] overflow-y-auto">
                                 {suggestions.map((cat) => (

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ItemCard from '../components/ItemCard';
 import ViewToggle from '../components/ViewToggle';
+import Pagination from '../components/Pagination';
 import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getVideos, deleteVideo } from '../api/videos';
@@ -18,8 +19,11 @@ interface Video {
     Categories?: Category[];
 }
 
+const ITEMS_PER_PAGE = 50;
+
 export default function Videos() {
     const [videos, setVideos] = useState<Video[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const [columns, setColumns] = useState<number>(() => {
         const saved = localStorage.getItem('gridColumns');
@@ -67,6 +71,11 @@ export default function Videos() {
         }
     };
 
+    const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+    const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+    const currentVideos = videos.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(videos.length / ITEMS_PER_PAGE);
+
     return (
         <div className="flex flex-col gap-6 animate-fade-in">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -81,7 +90,7 @@ export default function Videos() {
             </div>
 
             <div className={`grid gap-4 ${getGridClass()}`}>
-                {videos.map((video) => (
+                {currentVideos.map((video) => (
                     <ItemCard
                         key={video.id}
                         id={video.id}
@@ -96,8 +105,13 @@ export default function Videos() {
             </div>
 
             <p className="text-center text-gray-500 text-sm mt-4">
-                Mostrando {videos.length} videos en modo {columns} columnas.
+                Mostrando {currentVideos.length} de {videos.length} videos.
             </p>
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
         </div>
     );
 }

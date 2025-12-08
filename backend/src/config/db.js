@@ -6,7 +6,7 @@ const path = require('path');
 // Ideal para portabilidad, disco D:, y uso local.
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: path.join(__dirname, '../../database.sqlite'), // Se guardará en la raíz del backend
+    storage: path.join(__dirname, '../../database.sqlite'),
     logging: false,
 });
 

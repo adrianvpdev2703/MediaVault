@@ -13,12 +13,11 @@ import {
 import { getBookById, deleteBook } from '../api/books';
 import { getVideoById, deleteVideo } from '../api/videos';
 
-// Interfaz unificada para el estado
 interface DetailItem {
     id: number;
     title: string;
     link: string;
-    thumbnail: string; // o cover
+    thumbnail: string;
     Categories?: { id: number; name: string }[];
     createdAt?: string;
     updatedAt?: string;
@@ -40,7 +39,6 @@ export default function ItemDetail() {
                 let data;
                 if (type === 'book') {
                     data = await getBookById(id);
-                    // Normalizar nombre de imagen
                     data.thumbnail = data.cover;
                 } else {
                     data = await getVideoById(id);
@@ -48,7 +46,7 @@ export default function ItemDetail() {
                 setItem(data);
             } catch (error) {
                 console.error('Error cargando detalle', error);
-                navigate('/'); // Si falla, volver al home
+                navigate('/');
             } finally {
                 setLoading(false);
             }
@@ -92,7 +90,6 @@ export default function ItemDetail() {
 
     return (
         <div className="animate-fade-in max-w-6xl mx-auto">
-            {/* Botón Volver */}
             <button
                 onClick={() => navigate(-1)}
                 className="mb-6 flex items-center text-gray-400 hover:text-gruv-aqua transition-colors"
@@ -109,14 +106,12 @@ export default function ItemDetail() {
                             alt={item.title}
                             className="w-full h-auto object-cover max-h-[600px]"
                         />
-                        {/* Efecto de brillo sutil */}
+
                         <div className="absolute inset-0 bg-gradient-to-t from-gruv-dark/80 via-transparent to-transparent opacity-60" />
                     </div>
                 </div>
 
-                {/* COLUMNA DERECHA: INFO */}
                 <div className="lg:col-span-2 flex flex-col gap-6">
-                    {/* Título y Tipo */}
                     <div>
                         <span className="inline-block px-3 py-1 mb-3 text-xs font-bold tracking-wider uppercase rounded-full bg-white/5 text-gray-400 border border-white/10">
                             {type === 'book' ? 'Libro' : 'Video'}
@@ -137,7 +132,6 @@ export default function ItemDetail() {
 
                     <hr className="border-gray-700/50" />
 
-                    {/* Acciones Principales */}
                     <div className="flex flex-col gap-3">
                         <a
                             href={item.link}
@@ -181,7 +175,6 @@ export default function ItemDetail() {
                         </div>
                     </div>
 
-                    {/* Categorías */}
                     <div className="mt-4">
                         <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
                             <Tag size={14} /> Categorías
@@ -203,8 +196,6 @@ export default function ItemDetail() {
                             )}
                         </div>
                     </div>
-
-                    {/* Link crudo visual */}
                     <div className="mt-auto pt-6">
                         <div className="bg-black/30 p-3 rounded-lg border border-gray-800 break-all text-xs font-mono text-gray-500">
                             {item.link}

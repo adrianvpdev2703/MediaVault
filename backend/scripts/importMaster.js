@@ -14,11 +14,9 @@ const importMaster = async () => {
         const backup = JSON.parse(rawData);
         const { videos, books } = backup.data;
 
-        // FORCE: TRUE -> Borra cualquier rastro previo y crea tablas limpias
         await sequelize.sync({ force: true });
         console.log('✨ Base de datos SQLite creada desde cero.');
 
-        // 1. IMPORTAR VIDEOS
         console.log(`🔄 Restaurando ${videos.length} videos...`);
         for (const v of videos) {
             const newVideo = await Video.create({
@@ -39,7 +37,6 @@ const importMaster = async () => {
             }
         }
 
-        // 2. IMPORTAR LIBROS
         console.log(`🔄 Restaurando ${books.length} libros...`);
         for (const b of books) {
             const newBook = await Book.create({

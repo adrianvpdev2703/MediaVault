@@ -4,7 +4,7 @@ const cors = require('cors');
 const sequelize = require('./src/config/db');
 const routes = require('./src/routes/index');
 const cleanOrphanFiles = require('./src/utils/cleanup');
-const backupDb = require('./src/utils/backupDb'); // Tu script de backup diario
+const backupDb = require('./src/utils/backupDb');
 
 const app = express();
 app.use(cors());
@@ -16,11 +16,9 @@ app.use('/api', routes);
 const startServer = async () => {
     try {
         // --- CONFIGURACIÓN PARA SQLITE ---
-        // 1. Hacemos backup del archivo .sqlite antes de tocarlo
-        // (Asegúrate de tener src/utils/backupDb.js creado como hablamos antes)
-        //backupDb();
+        //Comentar y descomentar cuando toque hacer backup
+        backupDb();
 
-        // 2. Sincronizamos con alter: false para máxima estabilidad en SQLite
         await sequelize.sync({ alter: false });
         console.log('✅ Conectado a SQLITE (Modo Local)');
 
@@ -30,7 +28,7 @@ const startServer = async () => {
         console.log('✅ Conectado a MYSQL: db_videos');
         */
 
-        // Limpieza de imágenes huérfanas (funciona igual para ambos)
+        // Limpieza de imágenes huérfanas
         await cleanOrphanFiles();
 
         const PORT = process.env.PORT || 3000;

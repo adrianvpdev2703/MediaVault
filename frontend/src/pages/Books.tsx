@@ -4,6 +4,7 @@ import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getBooks, deleteBook } from '../api/books';
 import ViewToggle from '../components/ViewToggle';
+import Pagination from '../components/Pagination';
 
 interface Category {
     id: number;
@@ -18,16 +19,17 @@ interface Book {
     Categories?: Category[];
 }
 
+const ITEMS_PER_PAGE = 50;
+
 export default function Books() {
     const [books, setBooks] = useState<Book[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
-    // 1. ESTADO PARA LAS COLUMNAS (Con memoria local)
     const [columns, setColumns] = useState<number>(() => {
         const saved = localStorage.getItem('gridColumns');
-        return saved ? parseInt(saved) : 3; // 3 por defecto
+        return saved ? parseInt(saved) : 3;
     });
 
-    // 2. Guardar preferencia cuando cambie
     useEffect(() => {
         localStorage.setItem('gridColumns', columns.toString());
     }, [columns]);
@@ -49,14 +51,13 @@ export default function Books() {
         if (confirm('¿Seguro que quieres borrar este libro?')) {
             try {
                 await deleteBook(id.toString());
-                fetchBooks(); // Recargar la lista
+                fetchBooks();
             } catch (error) {
                 alert('Error al eliminar');
             }
         }
     };
 
-    // 3. Lógica para cambiar las clases de CSS según el número elegido
     const getGridClass = () => {
         switch (columns) {
             case 4:
@@ -70,9 +71,13 @@ export default function Books() {
         }
     };
 
+    const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+    const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+    const currentBooks = books.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(books.length / ITEMS_PER_PAGE);
+
     return (
         <div className="flex flex-col gap-6 animate-fade-in">
-            {/* Header con Botón de Agregar y Toggle de Vista */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <Link
                     to="/add?type=book"
@@ -81,13 +86,11 @@ export default function Books() {
                     <Plus className="mr-2" /> Add a Book
                 </Link>
 
-                {/* AQUÍ ESTÁ EL TOGGLE */}
                 <ViewToggle columns={columns} setColumns={setColumns} />
             </div>
 
-            {/* Grid Dinámico */}
             <div className={`grid gap-4 ${getGridClass()}`}>
-                {books.map((book) => (
+                {currentBooks.map((book) => (
                     <ItemCard
                         key={book.id}
                         id={book.id}
@@ -104,8 +107,14 @@ export default function Books() {
             </div>
 
             <p className="text-center text-gray-500 text-sm mt-4">
-                Mostrando {books.length} libros en modo {columns} columnas.
+                Mostrando {currentBooks.length} de {books.length} libros.
             </p>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
         </div>
     );
 }

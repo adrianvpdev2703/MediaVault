@@ -37,14 +37,11 @@ exports.createVideo = async (req, res) => {
             thumbnail: req.file ? req.file.filename : null,
         });
 
-        // --- CORRECCIÓN AQUÍ (Bucle Secuencial) ---
-        // 1. Limpiamos y filtramos strings vacíos (ej: "Terror, , Accion")
         const categoriesArray = categories
             .split(',')
             .map((c) => c.trim())
             .filter((c) => c.length > 0);
 
-        // 2. Procesamos una por una para no bloquear SQLite
         const categoryInstances = [];
         for (const name of categoriesArray) {
             const [cat] = await Category.findOrCreate({ where: { name } });
@@ -52,11 +49,10 @@ exports.createVideo = async (req, res) => {
         }
 
         await video.addCategories(categoryInstances);
-        // ------------------------------------------
 
         res.json(video);
     } catch (error) {
-        console.error(error); // Ver error en consola backend
+        console.error(error);
         res.status(500).json({ error: error.message });
     }
 };
@@ -76,7 +72,6 @@ exports.updateVideo = async (req, res) => {
         await video.save();
 
         if (categories) {
-            // --- CORRECCIÓN AQUÍ (Bucle Secuencial) ---
             const categoriesArray = categories
                 .split(',')
                 .map((c) => c.trim())
@@ -89,7 +84,6 @@ exports.updateVideo = async (req, res) => {
             }
 
             await video.setCategories(categoryInstances);
-            // ------------------------------------------
         }
 
         res.json(video);
