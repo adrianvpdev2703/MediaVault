@@ -55,7 +55,7 @@ export default function Navbar() {
                         to="/"
                         className="text-2xl font-bold text-gruv-yellow tracking-wider hover:opacity-80 transition-opacity whitespace-nowrap"
                     >
-                        Personal<span className="text-gruv-aqua">DB</span>
+                        Media<span className="text-gruv-aqua">Vault</span>
                     </Link>
 
                     {/* BARRA UNIVERSAL */}

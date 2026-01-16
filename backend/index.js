@@ -17,7 +17,7 @@ const startServer = async () => {
     try {
         // --- CONFIGURACIÓN PARA SQLITE ---
         //Comentar y descomentar cuando toque hacer backup
-        backupDb();
+        // backupDb();
 
         await sequelize.sync({ alter: false });
         console.log('✅ Conectado a SQLITE (Modo Local)');

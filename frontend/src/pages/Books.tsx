@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { getBooks, deleteBook } from '../api/books';
 import ViewToggle from '../components/ViewToggle';
 import Pagination from '../components/Pagination';
+import PaginationToggle from '../components/PaginationToggle'; // <--- IMPORTAR
 
 interface Category {
     id: number;
@@ -19,11 +20,17 @@ interface Book {
     Categories?: Category[];
 }
 
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 60;
 
 export default function Books() {
     const [books, setBooks] = useState<Book[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
+
+    // 1. ESTADO DE PAGINACIÓN
+    const [paginationEnabled, setPaginationEnabled] = useState(() => {
+        const saved = localStorage.getItem('paginationEnabled');
+        return saved !== null ? JSON.parse(saved) : true;
+    });
 
     const [columns, setColumns] = useState<number>(() => {
         const saved = localStorage.getItem('gridColumns');
@@ -33,6 +40,15 @@ export default function Books() {
     useEffect(() => {
         localStorage.setItem('gridColumns', columns.toString());
     }, [columns]);
+
+    // 2. GUARDAR PREFERENCIA
+    useEffect(() => {
+        localStorage.setItem(
+            'paginationEnabled',
+            JSON.stringify(paginationEnabled),
+        );
+        if (paginationEnabled) setCurrentPage(1);
+    }, [paginationEnabled]);
 
     const fetchBooks = async () => {
         try {
@@ -71,22 +87,34 @@ export default function Books() {
         }
     };
 
+    // --- LÓGICA HÍBRIDA ---
     const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
     const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
-    const currentBooks = books.slice(indexOfFirstItem, indexOfLastItem);
+
+    const currentBooks = paginationEnabled
+        ? books.slice(indexOfFirstItem, indexOfLastItem)
+        : books;
+
     const totalPages = Math.ceil(books.length / ITEMS_PER_PAGE);
 
     return (
         <div className="flex flex-col gap-6 animate-fade-in">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <Link
                     to="/add?type=book"
-                    className="w-full sm:w-auto flex items-center justify-center bg-gruv-aqua text-white px-6 py-3 rounded-lg text-lg font-bold hover:bg-gruv-green transition-transform hover:scale-105 shadow-lg"
+                    className="w-full md:w-auto flex items-center justify-center bg-gruv-aqua text-white px-6 py-3 rounded-lg text-lg font-bold hover:bg-gruv-green transition-transform hover:scale-105 shadow-lg"
                 >
                     <Plus className="mr-2" /> Add a Book
                 </Link>
 
-                <ViewToggle columns={columns} setColumns={setColumns} />
+                <div className="flex items-center gap-4">
+                    <PaginationToggle
+                        isEnabled={paginationEnabled}
+                        toggle={() => setPaginationEnabled(!paginationEnabled)}
+                    />
+                    <div className="h-8 w-[1px] bg-gray-700 mx-2 hidden sm:block"></div>
+                    <ViewToggle columns={columns} setColumns={setColumns} />
+                </div>
             </div>
 
             <div className={`grid gap-4 ${getGridClass()}`}>
@@ -107,14 +135,20 @@ export default function Books() {
             </div>
 
             <p className="text-center text-gray-500 text-sm mt-4">
-                Mostrando {currentBooks.length} de {books.length} libros.
+                Mostrando {currentBooks.length} de {books.length} libros
+                {paginationEnabled
+                    ? ` (Página ${currentPage})`
+                    : ' (Vista Completa)'}
+                .
             </p>
 
-            <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-            />
+            {paginationEnabled && totalPages > 1 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
+            )}
         </div>
     );
 }
